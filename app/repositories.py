@@ -102,6 +102,7 @@ class InternalNoteRepository:
                 cursor.execute("INSERT INTO internal_notes (ticket_id, author_agent_id, content, created_at) VALUES (%s, %s, %s, %s)",
                                (ticket_id, payload["author_agent_id"], payload["content"], now))
                 note_id = cursor.lastrowid
+                cursor.execute("UPDATE tickets SET updated_at = %s WHERE id = %s", (now, ticket_id))
             finally:
                 cursor.close()
         results = self.list_for_ticket(ticket_id)
