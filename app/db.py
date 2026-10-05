@@ -28,6 +28,11 @@ def connection(config: Settings = settings) -> Generator[MySQLConnection, None, 
             database_connection.close()
 
 
+# Public connection-helper contract. Keep ``connection`` above for existing
+# repository callers while exposing the planned, descriptive import name.
+get_connection = connection
+
+
 def initialize_database(config: Settings = settings) -> None:
     """Create the ticket schema on startup; safe to repeat on every boot."""
     statements: tuple[str, ...] = (

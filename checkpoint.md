@@ -16,3 +16,4 @@
 - [x] Remediation: `InternalNoteRepository.create_note` now updates its owning ticket's `updated_at` in the same transaction.
 - [x] Live verification: MySQL became healthy; application initialized schema and served all live checks. `python -m compileall app` passed. Compose infra was torn down after verification.
 - [x] Final Docker verification: pulled `mysql:8.0.40` and `python:3.10.16-slim`; built `sdlc-verify-ticket-service:test` with host networking; ran it on the Compose MySQL network, confirmed live unauthenticated `/health` (200), `/docs` (200), and a running container; removed verification container/image and tore down MySQL.
+- [x] Verifier remediation: exported `app.db.get_connection` as the backward-compatible alias of the existing `connection` context manager. Confirmed it imports, preserves object identity, and `python -m compileall app` passes.
