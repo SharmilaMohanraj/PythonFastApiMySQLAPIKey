@@ -13,8 +13,10 @@ class TicketService:
         self._tickets = ticket_repository
         self._notes = note_repository
 
-    def create_ticket(self, payload: TicketCreate) -> dict[str, Any]:
-        return self._tickets.create_ticket(payload.model_dump(mode="json"))
+    def create_ticket(self, payload: TicketCreate, customer_id: str) -> dict[str, Any]:
+        ticket = payload.model_dump(mode="json")
+        ticket["customer_id"] = customer_id
+        return self._tickets.create_ticket(ticket)
 
     def get_ticket_detail(self, ticket_id: int) -> dict[str, Any]:
         ticket = self._require_ticket(ticket_id)

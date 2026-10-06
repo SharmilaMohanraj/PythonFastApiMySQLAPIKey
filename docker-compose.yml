@@ -9,6 +9,8 @@ services:
       MYSQL_USER: ticket_user
       MYSQL_PASSWORD: ticket_password
       MYSQL_DATABASE: ticket_db
+      # Development-only credentials; provide production secrets through environment management.
+      AUTH_API_KEYS: '{"local-customer-key":{"id":"customer-1","role":"customer"},"local-agent-key":{"id":"agent-1","role":"agent"},"local-supervisor-key":{"id":"supervisor-1","role":"supervisor"}}'
     depends_on:
       mysql:
         condition: service_healthy

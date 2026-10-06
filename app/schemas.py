@@ -23,9 +23,54 @@ class TicketStatus(str, Enum):
 
 
 class TicketCreate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
     subject: NonEmptyText
     description: NonEmptyText
     priority: Priority
+
+
+class FeedbackCreate(BaseModel):
+    rating: int = Field(ge=1, le=5)
+    comment: str | None = Field(default=None, max_length=65535)
+
+
+class FeedbackResponse(BaseModel):
+    id: int
+    ticket_id: int
+    rating: int
+    comment: str | None
+    created_at: datetime
+
+
+class AgentSatisfactionResponse(BaseModel):
+    agent_id: str
+    average_rating: float | None
+
+
+class LowRatedTicketResponse(BaseModel):
+    ticket_id: int
+    rating: int
+    comment: str | None
+
+
+class PendingFeedbackTicketResponse(BaseModel):
+    ticket_id: int
+    pending_feedback: bool
+
+
+class OffsetPage(BaseModel):
+    items: list
+    total: int
+    limit: int
+    offset: int
+
+
+class LowRatedTicketPage(OffsetPage):
+    items: list[LowRatedTicketResponse]
+
+
+class PendingFeedbackTicketPage(OffsetPage):
+    items: list[PendingFeedbackTicketResponse]
 
 
 class TicketAssignmentUpdate(BaseModel):
@@ -49,6 +94,7 @@ class TicketResponse(BaseModel):
     priority: Priority
     status: TicketStatus
     assigned_agent_id: str | None
+    customer_id: str | None
     created_at: datetime
     updated_at: datetime
     resolved_at: datetime | None

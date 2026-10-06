@@ -19,12 +19,12 @@ def _utc_values(record: dict[str, Any] | None) -> dict[str, Any] | None:
 class TicketRepository:
     def create_ticket(self, payload: dict[str, Any]) -> dict[str, Any]:
         now = datetime.utcnow()
-        sql = """INSERT INTO tickets (subject, description, priority, status, created_at, updated_at)
-                 VALUES (%s, %s, %s, 'OPEN', %s, %s)"""
+        sql = """INSERT INTO tickets (subject, description, priority, customer_id, status, created_at, updated_at)
+                 VALUES (%s, %s, %s, %s, 'OPEN', %s, %s)"""
         with connection() as database_connection:
             cursor = database_connection.cursor()
             try:
-                cursor.execute(sql, (payload["subject"], payload["description"], payload["priority"], now, now))
+                cursor.execute(sql, (payload["subject"], payload["description"], payload["priority"], payload.get("customer_id"), now, now))
                 ticket_id = cursor.lastrowid
             finally:
                 cursor.close()

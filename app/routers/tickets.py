@@ -3,6 +3,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
 
+from app.auth import AuthenticatedPrincipal, require_roles
 from app.dependencies import get_ticket_service
 from app.schemas import (InternalNoteCreate, InternalNoteResponse, TicketAssignmentUpdate,
                          TicketCreate, TicketDetailResponse, TicketResponse, TicketStatusUpdate)
@@ -10,11 +11,17 @@ from app.services import TicketService
 
 router = APIRouter(tags=["tickets"])
 TicketServiceDependency = Annotated[TicketService, Depends(get_ticket_service)]
+CustomerPrincipal = Annotated[AuthenticatedPrincipal, Depends(require_roles("customer"))]
 
 
 @router.post("/tickets", response_model=TicketResponse, status_code=status.HTTP_201_CREATED)
-def create_ticket(payload: TicketCreate, service: TicketServiceDependency) -> dict:
-    return service.create_ticket(payload)
+def create_ticket(
+    payload: TicketCreate,
+    principal: CustomerPrincipal,
+    service: TicketServiceDependency,
+) -> dict:
+    """Create a ticket owned by the authenticated customer, never by caller input."""
+    return service.create_ticket(payload, principal.identifier)
 
 
 @router.get("/tickets/{ticket_id}", response_model=TicketDetailResponse)

@@ -43,6 +43,7 @@ def initialize_database(config: Settings = settings) -> None:
             priority ENUM('LOW','MEDIUM','HIGH','URGENT') NOT NULL,
             status ENUM('OPEN','IN_PROGRESS','RESOLVED','CLOSED') NOT NULL DEFAULT 'OPEN',
             assigned_agent_id VARCHAR(255) NULL,
+            customer_id VARCHAR(255) NULL,
             created_at DATETIME NOT NULL,
             updated_at DATETIME NOT NULL,
             resolved_at DATETIME NULL,

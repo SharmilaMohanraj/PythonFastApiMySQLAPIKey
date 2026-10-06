@@ -10,6 +10,7 @@ from fastapi.responses import JSONResponse
 
 from app.db import initialize_database
 from app.errors import DomainError
+from app.feedback import feedback_router, initialize_feedback_storage
 from app.routers import reports, tickets
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
@@ -19,13 +20,15 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     initialize_database()
-    logger.info("database schema initialized")
+    initialize_feedback_storage()
+    logger.info("database and feedback schemas initialized")
     yield
 
 
 app = FastAPI(title="Ticket Service", version="1.0.0", lifespan=lifespan)
 app.include_router(tickets.router)
 app.include_router(reports.router)
+app.include_router(feedback_router)
 
 
 @app.middleware("http")
